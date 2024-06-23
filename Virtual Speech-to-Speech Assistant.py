@@ -3,7 +3,7 @@ import pyttsx3
 from groq import Groq
 
 # Set the Groq API key
-groq_client = Groq(api_key="GROQ_API_KEY")
+groq_client = Groq(api_key="your_groq_api_key_here")
 
 # Initialize text-to-speech engine
 engine = pyttsx3.init()
