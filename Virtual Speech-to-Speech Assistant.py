@@ -1,53 +1,51 @@
 import speech_recognition as sr
 import pyttsx3
-import os
 from groq import Groq
 
 # Set the Groq API key
-groq_client = Groq(api_key="your_groq_api_key_here")
+groq_client = Groq(api_key="GROQ_API_KEY")
+
+# Initialize text-to-speech engine
+engine = pyttsx3.init()
 
 # Function to convert text to speech
-def SpeakText(Command):
-    engine = pyttsx3.init()
-    engine.say(Command)
+def speak_text(text):
+    engine.say(text)
     engine.runAndWait()
 
 # Initialize recognizer
-r = sr.Recognizer()
+recognizer = sr.Recognizer()
 
 # Function to record user's speech
 def record_text():
-    while True:
+    with sr.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source, duration=0.2)
+        print("Listening...")
+        audio = recognizer.listen(source)
         try:
-            with sr.Microphone() as source2:
-                r.adjust_for_ambient_noise(source2, duration=0.2)
-                print("Listening...")
-                audio2 = r.listen(source2)
-                MyText = r.recognize_google(audio2)
-                return MyText
+            return recognizer.recognize_google(audio)
+        except sr.UnknownValueError:
+            print("Could not understand audio")
         except sr.RequestError as e:
             print(f"Could not request results; {e}")
-        except sr.UnknownValueError:
-            print("Unknown error occurred")
+    return ""
 
 # Function to send user's message to Groq for response
 def send_to_groq(messages, model="llama3-8b-8192"):
-    chat_completion = groq_client.chat.completions.create(
-        messages=messages,
-        model=model,
-    )
-    return chat_completion.choices[0].message.content
-
-messages = []
+    response = groq_client.chat.completions.create(messages=messages, model=model)
+    return response.choices[0].message.content
 
 # Main loop for conversation
+messages = []
+
 while True:
-    text = record_text()
-    if text.lower() == "exit":
-        SpeakText("Goodbye!")
-        break
-    messages.append({"role": "user", "content": text})
-    completion = send_to_groq(messages)
-    SpeakText(completion)
-    print(completion)
-    messages.append({"role": "assistant", "content": completion})
+    user_text = record_text()
+    if user_text:
+        if user_text.lower() == "exit":
+            speak_text("Goodbye!")
+            break
+        messages.append({"role": "user", "content": user_text})
+        response_text = send_to_groq(messages)
+        speak_text(response_text)
+        print(response_text)
+        messages.append({"role": "assistant", "content": response_text})
