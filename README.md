@@ -23,7 +23,7 @@ This project is a speech-to-speech AI assistant that listens to your voice comma
 
     ```sh
     git clone https://github.com/yourusername/speech-to-speech-ai-assistant.git
-    cd speech-to-speech-ai-assistant
+    cd Virtual-Speech-to-Speech-Assistant
     ```
 
 2. **Install dependencies**:
