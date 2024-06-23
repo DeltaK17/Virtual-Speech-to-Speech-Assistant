@@ -49,4 +49,4 @@ This project is a speech-to-speech AI assistant that listens to your voice comma
 Run the script to start the speech-to-speech AI assistant:
 
 ```sh
-python assistant.py
+python Virtual-Speech-to-Speech-Assistant.py
